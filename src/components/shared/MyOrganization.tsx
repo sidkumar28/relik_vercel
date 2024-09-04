@@ -43,6 +43,10 @@ const MyOrganizations: React.FC = () => {
     setIsPopupOpen(true);
   };
 
+  const handleProposalClick = (proposal: Proposal) => {
+    router.push(`/ProposalDetails/${proposal.id}`);
+  };
+
   const handleCreateProposalClick = () => {
     if (selectedOrg) {
       router.push(`/CreateProposalForm?organization=${selectedOrg.name}`);
@@ -83,19 +87,23 @@ const MyOrganizations: React.FC = () => {
             <DialogTitle>Proposals for {selectedOrg?.name}</DialogTitle>
           </DialogHeader>
           <div>
-          <button
-            className="flex items-center justify-between w-full p-4 bg-gray-100 rounded"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <span>Proposals</span>
-            <span className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+            <button
+              className="flex items-center justify-between w-full p-4 bg-gray-100 rounded"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span>Proposals</span>
+              <span className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}>
                 <FaChevronDown />
-            </span>
-          </button>
+              </span>
+            </button>
             {isDropdownOpen && (
               <div className="max-h-64 overflow-y-auto mt-2">
                 {proposalsData.map((proposal) => (
-                  <div key={proposal.id} className="flex items-center space-x-4 mb-4">
+                  <div
+                    key={proposal.id}
+                    className="flex items-center space-x-4 mb-4 cursor-pointer"
+                    onClick={() => handleProposalClick(proposal)}
+                  >
                     <img src={proposal.logo} alt={proposal.title} className="w-8 h-8" />
                     <p>{proposal.title}</p>
                   </div>
@@ -104,7 +112,10 @@ const MyOrganizations: React.FC = () => {
             )}
           </div>
           <div className="mt-4 flex justify-end">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleCreateProposalClick}>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={handleCreateProposalClick}
+            >
               Create Proposal
             </button>
           </div>
