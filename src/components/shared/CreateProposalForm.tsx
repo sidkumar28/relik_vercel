@@ -1,141 +1,102 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
-const createProposalSchema = z.object({
-  organization: z.string().nonempty(),
-  title: z.string().min(2, { message: 'Proposal title must be at least 2 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
-  reason: z.string().optional(),
-  logo: z.instanceof(File).optional(),
-});
-
-type CreateProposalFormValues = z.infer<typeof createProposalSchema>;
-
-interface CreateProposalFormProps {
-  onSubmit: SubmitHandler<CreateProposalFormValues>;
+interface CreateProposalDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const CreateProposalForm: React.FC<CreateProposalFormProps> = ({ onSubmit }) => {
-  const [logoPreview, setLogoPreview] = useState<string | ArrayBuffer | null>(null);
-  
-  const searchParams = useSearchParams();
-  const organization = searchParams.get('organization') || '';
+const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpenChange }) => {
+  const [proposalTitle, setProposalTitle] = useState('');
+  const [proposalDescription, setProposalDescription] = useState('');
+  const [selectedVoteOption, setSelectedVoteOption] = useState<string | null>(null);
+  const [votingDuration, setVotingDuration] = useState('');
+  const [voteOptions] = useState(['Option 1', 'Option 2', 'Option 3', 'Option 4']);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<CreateProposalFormValues>({
-    resolver: zodResolver(createProposalSchema),
-    defaultValues: { organization },
-  });
-
-  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setValue('logo', file);
-      const reader = new FileReader();
-      reader.onloadend = () => setLogoPreview(reader.result);
-      reader.readAsDataURL(file);
+  const handleCreateProposalSubmit = () => {
+    if (!proposalTitle || !proposalDescription || !selectedVoteOption || !votingDuration) {
+      alert('Please fill all fields before submitting.');
+      return;
     }
+  
+    console.log('New Proposal Created:', {
+      title: proposalTitle,
+      description: proposalDescription,
+      voteOption: selectedVoteOption,
+      duration: votingDuration,
+    });
+    onOpenChange(false); 
   };
 
-  useEffect(() => {
-    setValue('organization', organization);
-  }, [organization, setValue]);
-
   return (
-    <Card className="max-w-lg mx-auto mt-10 p-6">
-      <CardHeader>
-        <CardTitle>Create a Proposal</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create New Proposal</DialogTitle>
+        </DialogHeader>
+        <div className="p-6 space-y-6">
           <div>
-            <Label htmlFor="organization">Organization</Label>
+            <label className="block text-sm font-semibold mb-1">Title:</label>
             <Input
-              id="organization"
-              value={organization}
-              readOnly
-              {...register('organization')}
-              className="mt-2"
+              type="text"
+              value={proposalTitle}
+              onChange={(e) => setProposalTitle(e.target.value)}
+              placeholder="Proposal title"
+              className="w-full p-2 border rounded-md"
             />
           </div>
-
           <div>
-            <Label htmlFor="title">
-              Proposal Title <span className="text-red-500">*</span>
-            </Label>
+            <label className="block text-sm font-semibold mb-1">Description:</label>
+            <textarea
+              value={proposalDescription}
+              onChange={(e) => setProposalDescription(e.target.value)}
+              placeholder="Proposal description"
+              className="w-full p-2 border rounded-md"
+              rows={3}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1">Vote Options:</label>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button className="w-full">{selectedVoteOption || 'Select Vote Option'}</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {voteOptions.map((option, index) => (
+                  <DropdownMenuItem key={index} onClick={() => setSelectedVoteOption(option)}>
+                    {option}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1">Voting Duration (in days):</label>
             <Input
-              id="title"
-              placeholder="Enter proposal title"
-              {...register('title')}
-              className="mt-2"
-            />
-            {errors.title && <p className="text-red-500 mt-1">{errors.title.message}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="description">
-              Description <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="description"
-              placeholder="Enter a brief description"
-              {...register('description')}
-              className="mt-2"
-            />
-            {errors.description && <p className="text-red-500 mt-1">{errors.description.message}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="reason">Reason</Label>
-            <Input
-              id="reason"
-              placeholder="Enter reason for the proposal"
-              {...register('reason')}
-              className="mt-2"
+              type="number"
+              value={votingDuration}
+              onChange={(e) => setVotingDuration(e.target.value)}
+              placeholder="e.g. 7"
+              className="w-full p-2 border rounded-md"
             />
           </div>
-
-          <div>
-            <Label htmlFor="logo">Proposal Logo</Label>
-            <input
-              type="file"
-              id="logo"
-              accept="image/*"
-              onChange={handleLogoChange}
-              className="mt-2"
-            />
-            {logoPreview && <img src={logoPreview as string} alt="Logo preview" className="mt-2 w-32 h-32 object-cover" />}
-            {errors.logo && <p className="text-red-500 mt-1">{errors.logo.message}</p>}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-pink-500 to-yellow-500 text-black font-semibold rounded-lg shadow-lg hover:scale-105 transition-transform"
-          >
-            Submit Proposal
+        </div>
+        <DialogFooter>
+          <Button onClick={handleCreateProposalSubmit} className="bg-gradient-to-r from-pink-500 to-yellow-500">
+            Submit
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default CreateProposalForm;
+export default CreateProposalDialog;

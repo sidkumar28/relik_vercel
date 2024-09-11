@@ -8,7 +8,7 @@ const Header = () => {
     <div 
       className="flex items-center justify-between h-16 px-4" 
       style={{
-        backgroundImage: 'linear-gradient(to right, #8a3aee, #240046)',
+        backgroundImage: 'bg-gradient-to-b from-[#051937] via-[#004d7a] to-[#008793]  ',
         color: 'white',
       }}
     >
@@ -21,9 +21,7 @@ const Header = () => {
         <div className="text-4xl font-bold">DAO</div>
       </div>
 
-      <div>
-        <ConnectWallet />
-      </div>
+      
     </div>
   );
 };

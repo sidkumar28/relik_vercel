@@ -4,7 +4,7 @@ import CreateProposalForm from '@/components/shared/CreateProposalForm';
 
 const CreateProposalPage = () => {
   const handleFormSubmit = (data: any) => {
-    // Handle the form submission here
+    
     console.log('Submitted Data:', data);
   };
 
