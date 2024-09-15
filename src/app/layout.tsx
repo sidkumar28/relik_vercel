@@ -7,10 +7,10 @@ import Footer from "@/components/shared/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DAO",
+  title: "TrueVote.io",
   description: "App to cast your vote through Ethereum",
   icons: {
-    icon: "/images/logo.png", 
+    icon: "/images/dao_logo.png", 
   },
 };
 

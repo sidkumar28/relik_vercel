@@ -1,48 +1,81 @@
 'use client';
-
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ethers } from 'ethers';
+import Web3 from 'web3';
 
-const ConnectWallet = () => {
+const ConnectWallet: React.FC = () => {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const router = useRouter();
-  const [isConnected, setIsConnected] = useState(false); // State to track wallet connection
 
-  const connectWalletHandler = async () => {
-    if (typeof window !== 'undefined' && window.ethereum) {
+  // Check if wallet is connected on component mount
+  useEffect(() => {
+    const checkWalletConnection = async () => {
       try {
-        // Check if MetaMask is connected
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-
-        if (accounts.length > 0) {
-          // Wallet is already connected
-          setIsConnected(true);
-          router.push('/MyOrganization');
-        } else {
-          // Request connection to MetaMask
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setIsConnected(true);
-          router.push('/MyOrganization');
+        const { ethereum } = window as any;
+        if (ethereum) {
+          const web3 = new Web3(ethereum);
+          const accounts = await web3.eth.getAccounts();
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+            router.push('/MyOrganization'); // Redirect if already connected
+          }
         }
-      } catch (error) {
-        console.error('Error connecting wallet:', error);
-        alert('Failed to connect wallet. Please check your MetaMask.');
+      } catch (err) {
+        console.error(err);
       }
-    } else {
-      // MetaMask is not installed
-      alert('MetaMask is not installed. Please install MetaMask to proceed.');
+    };
+    checkWalletConnection();
+  }, [router]);
+
+  // Function to handle wallet connection
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window as any;
+      if (!ethereum) {
+        alert('MetaMask not found!');
+        return;
+      }
+
+      // Request account access if needed
+      const web3 = new Web3(ethereum);
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      setWalletAddress(accounts[0]);
+      router.push('/MyOrganization'); // Redirect after successful connection
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Function to handle wallet disconnection
+  const disconnectWallet = async () => {
+    try {
+      setWalletAddress(null); // Clear the wallet address state
+      window.location.reload(); // Refresh the page after disconnection
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
-    <div>
-      <button
-        onClick={connectWalletHandler}
-        className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
-        style={{ whiteSpace: 'nowrap' }}
-      >
-        Connect Wallet
-      </button>
+    <div className="flex flex-col items-center">
+      {walletAddress ? (
+        <div className="flex flex-col items-center">
+          <p className="text-white mb-4">Connected: {walletAddress}</p>
+          <button
+            onClick={disconnectWallet}
+            className="bg-gradient-to-r from-red-500 via-yellow-500 to-purple-500 text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-64 h-16 text-center overflow-hidden"
+          >
+            Disconnect Wallet
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={connectWallet}
+          className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-64 h-16 text-center overflow-hidden"
+        >
+          Connect Wallet
+        </button>
+      )}
     </div>
   );
 };

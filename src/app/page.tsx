@@ -6,7 +6,6 @@ import ConnectWallet from '@/components/shared/ConnectWallet';
 const Home = () => {
   return (
     <div className="flex flex-col md:flex-row max-w-6xl mx-auto items-center p-10 gap-10 bg-gradient-to-b from-[#051937] via-[#004d7a] to-[#008793] rounded-lg shadow-lg border-2 border-orange-200">
-      
       <div className="flex flex-col justify-center w-full md:w-1/2 text-center md:text-left p-8 ">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
           Empower Your Vote
@@ -16,10 +15,8 @@ const Home = () => {
         </p>
         <div>
           <ConnectWallet />
+        </div>
       </div>
-      </div>
-
-      
       <div className="flex justify-center items-center w-full md:w-1/2 p-8">
         <Image 
           src="/images/eth.png" 
@@ -29,7 +26,6 @@ const Home = () => {
           className='object-contain'
         />
       </div>
-
     </div>
   );
 };
