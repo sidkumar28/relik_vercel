@@ -12,7 +12,7 @@ interface Proposal {
   optionDescriptions: string[];
   optionVoteCounts: number[];
   executed: boolean;
-  deadline: number;
+  deadline: bigint;
   totalVotes: number;
 }
 
@@ -26,33 +26,8 @@ interface ProposalDrawerProps {
 const ProposalDrawer: React.FC<ProposalDrawerProps> = ({ open, onClose, daoId, proposalId }) => {
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [account, setAccount] = useState<string | null>(null); // Store user's account
-
-  useEffect(() => {
-    const fetchProposal = async () => {
-      if (web3 && daoId !== undefined && proposalId !== undefined) {
-        const contract = new web3.eth.Contract(contractABI, contractAddress);
-        try {
-          // Explicitly type the proposal data returned from the contract
-          const proposalData = await contract.methods.getProposal(daoId, proposalId).call() as [string, string[], number[], boolean, number, number];
-          
-          setProposal({
-            id: proposalId,
-            description: proposalData[0],       // description (string)
-            optionDescriptions: proposalData[1], // optionDescriptions (string[])
-            optionVoteCounts: proposalData[2],  // optionVoteCounts (number[])
-            executed: proposalData[3],          // executed (boolean)
-            deadline: proposalData[4],          // deadline (number)
-            totalVotes: proposalData[5],        // totalVotes (number)
-          });
-        } catch (error) {
-          console.error('Error fetching proposal:', error);
-        }
-      }
-    };
-
-    fetchProposal();
-  }, [daoId, proposalId, web3]);
+  const [account, setAccount] = useState<string | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
 
   useEffect(() => {
     const initWeb3 = async () => {
@@ -69,6 +44,55 @@ const ProposalDrawer: React.FC<ProposalDrawerProps> = ({ open, onClose, daoId, p
 
     initWeb3();
   }, []);
+
+  useEffect(() => {
+    const fetchProposal = async () => {
+      if (web3 && daoId !== undefined && proposalId !== undefined) {
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+        try {
+          const proposalData = await contract.methods.getProposal(daoId, proposalId).call() as [string, string[], number[], boolean, number, number];
+          
+          setProposal({
+            id: proposalId,
+            description: proposalData[0],
+            optionDescriptions: proposalData[1],
+            optionVoteCounts: proposalData[2],
+            executed: proposalData[3],
+            deadline: BigInt(proposalData[4]),
+            totalVotes: proposalData[5],
+          });
+        } catch (error) {
+          console.error('Error fetching proposal:', error);
+        }
+      }
+    };
+
+    fetchProposal();
+  }, [daoId, proposalId, web3]);
+
+  useEffect(() => {
+    const updateTimeRemaining = () => {
+      if (proposal) {
+        const now = BigInt(Math.floor(Date.now() / 1000));
+        const deadline = BigInt(proposal.deadline);
+        const timeLeft = deadline - now;
+  
+        if (timeLeft <= BigInt(0)) {
+          setTimeRemaining("Voting ended");
+        } else {
+          const days = Number(timeLeft / BigInt(24 * 60 * 60));
+          const hours = Number((timeLeft % BigInt(24 * 60 * 60)) / BigInt(60 * 60));
+          const minutes = Number((timeLeft % BigInt(60 * 60)) / BigInt(60));
+          setTimeRemaining(`${days}d ${hours}h ${minutes}m remaining`);
+        }
+      }
+    };
+  
+    updateTimeRemaining();
+    const timer = setInterval(updateTimeRemaining, 60000); // Update every minute
+  
+    return () => clearInterval(timer);
+  }, [proposal]);
 
   const handleVote = async (optionIndex: number) => {
     if (web3 && account && daoId !== undefined && proposalId !== undefined) {
@@ -88,6 +112,7 @@ const ProposalDrawer: React.FC<ProposalDrawerProps> = ({ open, onClose, daoId, p
         <DrawerHeader>
           <DrawerTitle>{`Proposal ${proposalId}`}</DrawerTitle>
           <DrawerDescription>{proposal?.description || 'Loading...'}</DrawerDescription>
+          <p className="text-sm text-gray-500 mt-2">{timeRemaining}</p>
         </DrawerHeader>
 
         <div className="p-4">
@@ -99,7 +124,7 @@ const ProposalDrawer: React.FC<ProposalDrawerProps> = ({ open, onClose, daoId, p
                   <p>{option}</p>
                   <p>{`Votes: ${proposal?.optionVoteCounts[index]}`}</p>
                 </div>
-                <Button onClick={() => handleVote(index)} className="mt-2">
+                <Button onClick={() => handleVote(index)} className="mt-2" disabled={timeRemaining === "Voting ended"}>
                   Vote for this option
                 </Button>
               </div>

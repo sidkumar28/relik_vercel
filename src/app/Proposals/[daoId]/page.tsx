@@ -7,13 +7,13 @@ import CreateProposalDialog from '@/components/shared/CreateProposalForm';
 import ProposalDrawer from '@/components/shared/ProposalDrawer'; 
 import { useParams } from 'next/navigation'; 
 
-const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545');
-const contract = new web3.eth.Contract(contractABI, contractAddress);
+let web3: Web3;
+let contract: any;
 
 interface Proposal {
   id: number;
   description: string;
-  options: string[];
+  optionDescriptions: string[];
   optionVoteCounts: number[];
   executed: boolean;
   deadline: number;
@@ -27,72 +27,112 @@ const ProposalPage: React.FC = () => {
   const [organization, setOrganization] = useState<{ id: number; name: string; logo: string } | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isWeb3Ready, setIsWeb3Ready] = useState(false);
   
   const { daoId } = useParams();
   const resolvedDaoId = Array.isArray(daoId) ? daoId[0] : daoId;
 
   useEffect(() => {
-    const fetchDAOAndProposals = async () => {
-      try {
-        const accounts = await web3.eth.getAccounts();
-        if (accounts.length === 0) {
-          throw new Error('No accounts found');
+    const initWeb3 = async () => {
+      if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+        try {
+          // Request account access
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          web3 = new Web3(window.ethereum);
+          contract = new web3.eth.Contract(contractABI, contractAddress);
+          setIsWeb3Ready(true);
+        } catch (error) {
+          console.error("User denied account access or MetaMask is not installed");
+          setError("Please install MetaMask and connect your account to use this dApp.");
         }
-
-        if (resolvedDaoId) {
-          console.log("Fetching DAO Name for daoId:", resolvedDaoId);
-
-          // Fetch DAO name
-          const daoName = await contract.methods.returnDaoName(resolvedDaoId).call();
-
-          if (typeof daoName !== 'string' || !daoName) {
-            throw new Error('Invalid DAO name returned from contract');
-          }
-
-          console.log("Fetched DAO Name:", daoName);
-
-          setOrganization({
-            id: parseInt(resolvedDaoId), 
-            name: daoName,
-            logo: '/images/concept.png',
-          });
-
-          // Fetch total proposals
-          const dao = await contract.methods.daos(resolvedDaoId).call();
-          const totalProposals = web3.utils.toBN(dao.proposalCount).toNumber(); // Convert BN to number
-
-          if (isNaN(totalProposals) || totalProposals < 0) {
-            throw new Error('Invalid totalProposals value');
-          }
-
-          // Fetch proposals details
-          const proposalsData = await Promise.all(
-            Array.from({ length: totalProposals }, (_, index) =>
-              contract.methods.getProposal(resolvedDaoId, index).call()
-            )
-          );
-
-          // Format proposal data
-          const formattedProposals = proposalsData.map((proposalData: any, index: number) => ({
-            id: index,
-            description: proposalData[0],
-            options: proposalData[1],
-            optionVoteCounts: proposalData[2].map((voteCount: string) => web3.utils.toBN(voteCount).toNumber()), // Convert from BigNumber to number
-            executed: proposalData[3],
-            deadline: web3.utils.toBN(proposalData[4]).toNumber(), // Convert from BigNumber to number
-            totalVotes: web3.utils.toBN(proposalData[5]).toNumber() // Convert from BigNumber to number
-          }));
-
-          setProposals(formattedProposals);
-        }
-      } catch (error) {
-        console.error('Error fetching DAO and proposals:', error);
-        setError('Failed to fetch DAO and proposals. Please check your connection and try again.');
+      } else {
+        console.log('No web3 detected. Falling back to http://localhost:8545.');
+        const httpProvider = new Web3.providers.HttpProvider('http://localhost:8545');
+        web3 = new Web3(httpProvider);
+        contract = new web3.eth.Contract(contractABI, contractAddress);
+        setIsWeb3Ready(true);
       }
     };
 
-    fetchDAOAndProposals();
-  }, [resolvedDaoId]);
+    initWeb3();
+  }, []);
+
+  const fetchDAOAndProposals = async () => {
+    if (!isWeb3Ready) {
+      console.log("Web3 is not ready yet");
+      return;
+    }
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+      if (accounts.length === 0) {
+        throw new Error('No accounts found. Please connect your MetaMask account.');
+      }
+
+      if (resolvedDaoId) {
+        console.log("Fetching DAO Name for daoId:", resolvedDaoId);
+
+        // Fetch DAO name
+        const daoName = await contract.methods.returnDaoName(resolvedDaoId).call();
+
+        if (typeof daoName !== 'string' || !daoName) {
+          throw new Error('Invalid DAO name returned from contract');
+        }
+
+        console.log("Fetched DAO Name:", daoName);
+
+        setOrganization({
+          id: parseInt(resolvedDaoId), 
+          name: daoName,
+          logo: '/images/concept.png',
+        });
+
+        // Fetch DAO details
+        const dao = await contract.methods.daos(resolvedDaoId).call();
+        const totalProposals = parseInt(dao.proposalCount);
+
+        console.log("Fetched DAO:", dao);
+        console.log("Total proposals:", totalProposals);
+
+        if (isNaN(totalProposals) || totalProposals < 0) {
+          throw new Error('Invalid totalProposals value');
+        }
+
+        // Fetch proposals details
+        const proposalsData = await Promise.all(
+          Array.from({ length: totalProposals }, (_, index) =>
+            contract.methods.getProposal(resolvedDaoId, index).call()
+          )
+        );
+
+        console.log("Fetched proposals data:", proposalsData);
+
+        // Format proposal data
+        const formattedProposals = proposalsData.map((proposalData: any, index: number) => ({
+          id: index,
+          description: proposalData.description,
+          optionDescriptions: proposalData.optionDescriptions,
+          optionVoteCounts: proposalData.optionVoteCounts.map((count: string) => parseInt(count)),
+          executed: proposalData.executed,
+          deadline: parseInt(proposalData.deadline),
+          totalVotes: parseInt(proposalData.totalVotes)
+        }));
+
+        console.log("Formatted proposals:", formattedProposals);
+
+        setProposals(formattedProposals);
+      }
+    } catch (error) {
+      console.error('Error fetching DAO and proposals:', error);
+      setError((error as Error).message); // Cast error to 'Error'
+    }
+  };
+
+  useEffect(() => {
+    if (isWeb3Ready) {
+      fetchDAOAndProposals();
+    }
+  }, [resolvedDaoId, isWeb3Ready]);
 
   const handleProposalClick = (proposal: Proposal) => {
     setSelectedProposal(proposal);
@@ -101,6 +141,11 @@ const ProposalPage: React.FC = () => {
 
   const handleCreateProposalClick = () => {
     setDialogOpen(true);
+  };
+
+  const handleProposalCreated = () => {
+    fetchDAOAndProposals();
+    setDialogOpen(false);
   };
 
   return (
@@ -164,6 +209,7 @@ const ProposalPage: React.FC = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         daoId={organization?.id ?? 0}
+        onProposalCreated={handleProposalCreated}
       />
     </div>
   );

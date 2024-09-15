@@ -10,12 +10,13 @@ import { contractABI, contractAddress } from '@/contracts/contract';
 interface CreateProposalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  daoId: number; // Add DAO ID prop
+  daoId: number;
+  onProposalCreated: () => void; // New prop
 }
 
-const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpenChange, daoId }) => {
+const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpenChange, daoId, onProposalCreated }) => {
   const [proposalDescription, setProposalDescription] = useState('');
-  const [voteOptions, setVoteOptions] = useState<string[]>(['']); // Initialize with one empty option
+  const [voteOptions, setVoteOptions] = useState<string[]>(['']);
   const [newOption, setNewOption] = useState('');
   const [votingDuration, setVotingDuration] = useState('');
 
@@ -49,13 +50,12 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
       await contract.methods.createProposal(daoId, proposalDescription, voteOptions, durationInSeconds).send({ from: accounts[0] });
 
       alert('Proposal created successfully');
-      onOpenChange(false); 
+      onProposalCreated();
     } catch (error) {
       console.error('Error creating proposal:', error);
       alert('Failed to create proposal. Please try again.');
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
