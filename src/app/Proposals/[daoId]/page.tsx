@@ -6,7 +6,7 @@ import { contractABI, contractAddress } from '@/contracts/contract';
 import CreateProposalDialog from '@/components/shared/CreateProposalForm'; 
 import ProposalSidebar from '@/components/shared/ProposalSidebar'; 
 import OrganizationActionsDialog from '@/components/shared/OrganizationDialog';
-import { useParams } from 'next/navigation'; 
+import { useParams, useSearchParams } from 'next/navigation'; 
 
 let web3: Web3;
 let contract: any;
@@ -30,8 +30,10 @@ const ProposalPage: React.FC = () => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isWeb3Ready, setIsWeb3Ready] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const { daoId } = useParams();
+  const searchParams = useSearchParams();
   const resolvedDaoId = Array.isArray(daoId) ? daoId[0] : daoId;
 
   useEffect(() => {
@@ -56,7 +58,9 @@ const ProposalPage: React.FC = () => {
     };
 
     initWeb3();
-  }, []);
+    const isAdminParam = searchParams.get('isAdmin');
+    setIsAdmin(isAdminParam === 'true');
+  }, [searchParams]);
 
   const fetchDAOAndProposals = async () => {
     if (!isWeb3Ready) {
@@ -138,12 +142,14 @@ const ProposalPage: React.FC = () => {
         >
           Create Proposal
         </button>
-        <button
-          className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
-          onClick={handleManageMembersClick}
-        >
-          Manage Members
-        </button>
+        {isAdmin && (
+          <button
+            className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+            onClick={handleManageMembersClick}
+          >
+            Manage Members
+          </button>
+        )}
       </div>
 
       <div className="flex items-start justify-between p-8 border-2 border-orange-400 rounded-lg bg-gradient-to-r from-[#001f3f] via-[#003366] to-[#00274d]">
@@ -160,7 +166,7 @@ const ProposalPage: React.FC = () => {
           </div>
           <div className="mt-6">
             <h2 className="text-2xl font-bold mb-4">Proposals</h2>
-            <div className="h-80 overflow-y-auto space-y-4 pr-4"> {/* Fixed height and scrollbar for proposals list */}
+            <div className="h-80 overflow-y-auto space-y-4 pr-4">
               {error ? (
                 <p className="text-red-500">{error}</p>
               ) : proposals.length > 0 ? (
