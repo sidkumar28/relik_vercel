@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import { contractABI, contractAddress } from '@/contracts/contract';
 import CreateProposalDialog from '@/components/shared/CreateProposalForm'; 
-import ProposalDrawer from '@/components/shared/ProposalDrawer'; 
+import ProposalSidebar from '@/components/shared/ProposalSidebar'; 
+import OrganizationActionsDialog from '@/components/shared/OrganizationDialog';
 import { useParams } from 'next/navigation'; 
 
 let web3: Web3;
@@ -23,6 +24,7 @@ interface Proposal {
 const ProposalPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [manageMembersOpen, setManageMembersOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [organization, setOrganization] = useState<{ id: number; name: string; logo: string } | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -36,7 +38,6 @@ const ProposalPage: React.FC = () => {
     const initWeb3 = async () => {
       if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
         try {
-          // Request account access
           await window.ethereum.request({ method: 'eth_requestAccounts' });
           web3 = new Web3(window.ethereum);
           contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -70,44 +71,22 @@ const ProposalPage: React.FC = () => {
       }
 
       if (resolvedDaoId) {
-        console.log("Fetching DAO Name for daoId:", resolvedDaoId);
-
-        // Fetch DAO name
         const daoName = await contract.methods.returnDaoName(resolvedDaoId).call();
-
-        if (typeof daoName !== 'string' || !daoName) {
-          throw new Error('Invalid DAO name returned from contract');
-        }
-
-        console.log("Fetched DAO Name:", daoName);
-
         setOrganization({
           id: parseInt(resolvedDaoId), 
           name: daoName,
           logo: '/images/concept.png',
         });
 
-        // Fetch DAO details
         const dao = await contract.methods.daos(resolvedDaoId).call();
         const totalProposals = parseInt(dao.proposalCount);
 
-        console.log("Fetched DAO:", dao);
-        console.log("Total proposals:", totalProposals);
-
-        if (isNaN(totalProposals) || totalProposals < 0) {
-          throw new Error('Invalid totalProposals value');
-        }
-
-        // Fetch proposals details
         const proposalsData = await Promise.all(
           Array.from({ length: totalProposals }, (_, index) =>
             contract.methods.getProposal(resolvedDaoId, index).call()
           )
         );
 
-        console.log("Fetched proposals data:", proposalsData);
-
-        // Format proposal data
         const formattedProposals = proposalsData.map((proposalData: any, index: number) => ({
           id: index,
           description: proposalData.description,
@@ -118,13 +97,11 @@ const ProposalPage: React.FC = () => {
           totalVotes: parseInt(proposalData.totalVotes)
         }));
 
-        console.log("Formatted proposals:", formattedProposals);
-
         setProposals(formattedProposals);
       }
     } catch (error) {
       console.error('Error fetching DAO and proposals:', error);
-      setError((error as Error).message); // Cast error to 'Error'
+      setError((error as Error).message); 
     }
   };
 
@@ -143,6 +120,10 @@ const ProposalPage: React.FC = () => {
     setDialogOpen(true);
   };
 
+  const handleManageMembersClick = () => {
+    setManageMembersOpen(true);
+  };
+
   const handleProposalCreated = () => {
     fetchDAOAndProposals();
     setDialogOpen(false);
@@ -150,12 +131,18 @@ const ProposalPage: React.FC = () => {
 
   return (
     <div className="min-h-screen p-8 text-white max-w-screen-xl mx-auto">
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between">
         <button
           className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
           onClick={handleCreateProposalClick}
         >
           Create Proposal
+        </button>
+        <button
+          className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+          onClick={handleManageMembersClick}
+        >
+          Manage Members
         </button>
       </div>
 
@@ -173,7 +160,7 @@ const ProposalPage: React.FC = () => {
           </div>
           <div className="mt-6">
             <h2 className="text-2xl font-bold mb-4">Proposals</h2>
-            <div className="space-y-4">
+            <div className="h-80 overflow-y-auto space-y-4 pr-4"> {/* Fixed height and scrollbar for proposals list */}
               {error ? (
                 <p className="text-red-500">{error}</p>
               ) : proposals.length > 0 ? (
@@ -197,7 +184,7 @@ const ProposalPage: React.FC = () => {
       </div>
 
       {selectedProposal && organization?.id !== undefined && (
-        <ProposalDrawer
+        <ProposalSidebar
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           daoId={organization.id}
@@ -211,6 +198,14 @@ const ProposalPage: React.FC = () => {
         daoId={organization?.id ?? 0}
         onProposalCreated={handleProposalCreated}
       />
+
+      {organization?.id !== undefined && (
+        <OrganizationActionsDialog
+          isOpen={manageMembersOpen}
+          onClose={() => setManageMembersOpen(false)}
+          daoId={organization.id}
+        />
+      )}
     </div>
   );
 };

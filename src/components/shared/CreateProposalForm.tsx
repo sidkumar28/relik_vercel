@@ -16,19 +16,17 @@ interface CreateProposalDialogProps {
 
 const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpenChange, daoId, onProposalCreated }) => {
   const [proposalDescription, setProposalDescription] = useState('');
-  const [voteOptions, setVoteOptions] = useState<string[]>(['']);
-  const [newOption, setNewOption] = useState('');
+  const [voteOptions, setVoteOptions] = useState<string[]>(['', '', '', '']);
   const [votingDuration, setVotingDuration] = useState('');
 
-  const handleAddOption = () => {
-    if (newOption) {
-      setVoteOptions([...voteOptions, newOption]);
-      setNewOption('');
-    }
+  const handleOptionChange = (index: number, value: string) => {
+    const newOptions = [...voteOptions];
+    newOptions[index] = value;
+    setVoteOptions(newOptions);
   };
 
   const handleCreateProposalSubmit = async () => {
-    if (!proposalDescription || voteOptions.length === 0 || !votingDuration) {
+    if (!proposalDescription || voteOptions.some(option => !option) || !votingDuration) {
       alert('Please fill all fields before submitting.');
       return;
     }
@@ -58,14 +56,15 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
   };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Proposal</DialogTitle>
         </DialogHeader>
-        <div className="p-6 space-y-6">
-          <div>
-            <label className="block text-sm font-semibold mb-1">Description:</label>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <label htmlFor="description" className="text-sm font-medium">Description:</label>
             <textarea
+              id="description"
               value={proposalDescription}
               onChange={(e) => setProposalDescription(e.target.value)}
               placeholder="Proposal description"
@@ -73,31 +72,23 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
               rows={3}
             />
           </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1">Vote Options:</label>
-            <div className="flex flex-col space-y-2 mb-4">
-              {voteOptions.map((option, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <span className="bg-gray-700 p-2 rounded-md text-white">{option}</span>
-                </div>
-              ))}
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="text"
-                  value={newOption}
-                  onChange={(e) => setNewOption(e.target.value)}
-                  placeholder="Add new option"
-                  className="w-full p-2 border rounded-md"
-                />
-                <Button onClick={handleAddOption} className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500">
-                  Add
-                </Button>
-              </div>
-            </div>
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Vote Options:</label>
+            {voteOptions.map((option, index) => (
+              <Input
+                key={index}
+                type="text"
+                value={option}
+                onChange={(e) => handleOptionChange(index, e.target.value)}
+                placeholder={`Option ${index + 1}`}
+                className="w-full p-2 border rounded-md"
+              />
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1">Voting Duration (in days):</label>
+          <div className="grid gap-2">
+            <label htmlFor="duration" className="text-sm font-medium">Voting Duration (in days):</label>
             <Input
+              id="duration"
               type="number"
               value={votingDuration}
               onChange={(e) => setVotingDuration(e.target.value)}

@@ -24,11 +24,11 @@ const createOrganizationSchema = z.object({
 type CreateOrganizationFormValues = z.infer<typeof createOrganizationSchema>;
 
 interface CreateOrganizationDialogProps {
-  onOrganizationCreated?: () => void; // Optional callback to trigger re-fetch
+  onOrganizationCreated: () => void; // Changed to required prop
 }
 
 const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onOrganizationCreated }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateOrganizationFormValues>({
@@ -53,11 +53,10 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onO
       const contract = new web3.eth.Contract(contractABI, contractAddress);
       const response = await contract.methods.createDAO(data.title).send({ from: accounts[0] });
   
-      // Use optional chaining to safely access events
       const daoCreatedEvent = response.events?.DAOCreated;
       if (daoCreatedEvent) {
         alert('DAO created successfully!');
-        if (onOrganizationCreated) onOrganizationCreated(); // Trigger re-fetch
+        onOrganizationCreated(); // Call the callback to refetch organizations
       } else {
         alert('DAO creation failed.');
       }
@@ -68,8 +67,7 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onO
       console.error(err);
       setError('Failed to create DAO');
     }
-  };
-  
+  };  
   const handleOpenDialog = () => {
     setIsDialogOpen(true); 
   };

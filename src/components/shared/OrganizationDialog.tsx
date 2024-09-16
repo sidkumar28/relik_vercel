@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Web3 from 'web3';
 import { contractABI, contractAddress } from '@/contracts/contract';
-import { useRouter } from 'next/navigation';
 
 interface OrganizationActionsDialogProps {
   isOpen: boolean;
@@ -19,7 +17,6 @@ interface OrganizationActionsDialogProps {
 const OrganizationActionsDialog: React.FC<OrganizationActionsDialogProps> = ({ isOpen, onClose, daoId }) => {
   const [memberAddress, setMemberAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleAddMember = async () => {
     try {
@@ -63,13 +60,9 @@ const OrganizationActionsDialog: React.FC<OrganizationActionsDialogProps> = ({ i
     }
   };
 
-  const handleProposalRedirect = () => {
-    router.push(`/Proposals/${daoId}`);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg mx-auto p-6">
+      <DialogContent className="max-w-lg mx-auto p-6 bg-gray-800 text-white">
         <DialogHeader>
           <DialogTitle>Organization Actions</DialogTitle>
         </DialogHeader>
@@ -80,6 +73,7 @@ const OrganizationActionsDialog: React.FC<OrganizationActionsDialogProps> = ({ i
             value={memberAddress}
             onChange={(e) => setMemberAddress(e.target.value)}
             placeholder="Enter member address"
+            className="mt-2"
           />
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
@@ -90,12 +84,9 @@ const OrganizationActionsDialog: React.FC<OrganizationActionsDialogProps> = ({ i
           <Button onClick={handleRemoveMember} className="bg-red-500 text-white">
             Remove Member
           </Button>
-          <Button onClick={handleProposalRedirect} className="bg-blue-500 text-white">
-            View Proposals
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
+          {/* <Button variant="ghost" onClick={onClose} className="bg-gray-500 text-white">
             Close
-          </Button>
+          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>

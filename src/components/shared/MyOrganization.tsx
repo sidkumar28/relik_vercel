@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Web3 from 'web3';
 import { contractABI, contractAddress } from '@/contracts/contract';
 import CreateOrganizationDialog from '@/components/shared/CreateOrganizationForm';
-import OrganizationDialog from '@/components/shared/OrganizationDialog'; // Import the new dialog component
 
 interface Organization {
   id: number;
@@ -15,70 +14,62 @@ interface Organization {
 const MyOrganizations: React.FC = () => {
   const [adminOrganizations, setAdminOrganizations] = useState<Organization[]>([]);
   const [memberOrganizations, setMemberOrganizations] = useState<Organization[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // For controlling dialog visibility
-  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null); // To track selected org
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const { ethereum } = window as any;
-        if (!ethereum) {
-          alert('MetaMask not found!');
-          return;
-        }
-
-        const web3 = new Web3(ethereum);
-        const accounts = await web3.eth.getAccounts();
-        const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-        if (accounts.length === 0) {
-          alert('No accounts found');
-          return;
-        }
-
-        const adminOrgIds: number[] = await contract.methods.getDAOsForSender_admin().call({ from: accounts[0] });
-        const memberOrgIds: number[] = await contract.methods.getDAOsForSender_member().call({ from: accounts[0] });
-
-        const adminOrgs = await Promise.all(
-          adminOrgIds.map(async (id: number) => {
-            const name = await contract.methods.returnDaoName(id).call();
-            return { id, name: name || 'Unknown DAO' };
-          })
-        );
-
-        const memberOrgs = await Promise.all(
-          memberOrgIds.map(async (id: number) => {
-            const name = await contract.methods.returnDaoName(id).call();
-            return { id, name: name || 'Unknown DAO' };
-          })
-        );
-
-        setAdminOrganizations(adminOrgs as Organization[]);
-        setMemberOrganizations(memberOrgs as Organization[]);
-      } catch (error) {
-        console.error('Error fetching DAOs:', error);
+  const fetchOrganizations = useCallback(async () => {
+    try {
+      const { ethereum } = window as any;
+      if (!ethereum) {
+        alert('MetaMask not found!');
+        return;
       }
-    };
 
-    fetchOrganizations();
+      const web3 = new Web3(ethereum);
+      const accounts = await web3.eth.getAccounts();
+      const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+      if (accounts.length === 0) {
+        alert('No accounts found');
+        return;
+      }
+
+      const adminOrgIds: number[] = await contract.methods.getDAOsForSender_admin().call({ from: accounts[0] });
+      const memberOrgIds: number[] = await contract.methods.getDAOsForSender_member().call({ from: accounts[0] });
+
+      const adminOrgs = await Promise.all(
+        adminOrgIds.map(async (id: number) => {
+          const name = await contract.methods.returnDaoName(id).call();
+          return { id, name: name || 'Unknown DAO' };
+        })
+      );
+
+      const memberOrgs = await Promise.all(
+        memberOrgIds.map(async (id: number) => {
+          const name = await contract.methods.returnDaoName(id).call();
+          return { id, name: name || 'Unknown DAO' };
+        })
+      );
+
+      setAdminOrganizations(adminOrgs as Organization[]);
+      setMemberOrganizations(memberOrgs as Organization[]);
+    } catch (error) {
+      console.error('Error fetching DAOs:', error);
+    }
   }, []);
 
-  const handleOrgClick = (org: Organization) => {
-    setSelectedOrganization(org);
-    setIsDialogOpen(true); // Open the dialog when org is clicked
-  };
+  useEffect(() => {
+    fetchOrganizations();
+  }, [fetchOrganizations]);
 
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-    setSelectedOrganization(null);
+  const handleOrgClick = (org: Organization) => {
+    router.push(`/Proposals/${org.id}`);
   };
 
   return (
     <div className="p-12 text-white max-w-screen-xl mx-auto">
       {/* Add Create Organization Button */}
       <div className="mb-6 flex justify-center">
-        <CreateOrganizationDialog />
+      <CreateOrganizationDialog onOrganizationCreated={fetchOrganizations} />
       </div>
 
       <div
@@ -148,15 +139,6 @@ const MyOrganizations: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Organization Actions Dialog */}
-      {selectedOrganization && (
-        <OrganizationDialog
-          isOpen={isDialogOpen}
-          onClose={handleDialogClose}
-          daoId={selectedOrganization.id}
-        />
-      )}
     </div>
   );
 };
