@@ -57,9 +57,9 @@ const ConnectWallet: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-start">
       {walletAddress ? (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-start">
           <p className="text-white mb-4">Connected: {walletAddress}</p>
           <button
             onClick={disconnectWallet}

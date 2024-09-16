@@ -52,7 +52,7 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
     initWeb3();
   }, []);
 
-  useEffect(() => {
+  useEffect
     const fetchProposal = async () => {
       if (web3 && daoId !== undefined && proposalId !== undefined) {
         const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -73,10 +73,13 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
         }
       }
     };
-
-    fetchProposal();
-  }, [daoId, proposalId, web3]);
-
+  
+    useEffect(() => {
+      fetchProposal();
+    }, [daoId, proposalId, web3]);
+  
+    
+  
   useEffect(() => {
     const updateTimeRemaining = () => {
       if (proposal) {
@@ -108,7 +111,9 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
         const optionIndex = parseInt(selectedOption);
         await contract.methods.vote(daoId, proposalId, optionIndex).send({ from: account });
         alert('Vote submitted successfully!');
-        // Optionally, refresh the proposal data here
+        // Refetch the proposal data after successful vote
+        await fetchProposal();
+        setSelectedOption(''); // Reset the selected option
       } catch (error) {
         console.error('Error while voting:', error);
         alert('Failed to submit vote. Please try again.');

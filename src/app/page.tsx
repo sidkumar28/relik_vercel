@@ -10,7 +10,7 @@ const Home = () => {
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
           Empower Your Vote
         </h1>
-        <p className="text-md md:text-lg text-gray-200 mb-8">
+        <p className="text-md md:text-lg text-gray-200 mb-8 ">
           Unlock the power of decentralized governance with our intuitive platform. Every vote matters, and together, we shape the future of decision-making. Join us in this journey toward transparent, collective governance. 
         </p>
         <div>
