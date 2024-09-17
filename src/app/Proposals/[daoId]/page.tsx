@@ -67,13 +67,13 @@ const ProposalPage: React.FC = () => {
       console.log("Web3 is not ready yet");
       return;
     }
-
+  
     try {
       const accounts = await web3.eth.getAccounts();
       if (accounts.length === 0) {
         throw new Error('No accounts found. Please connect your MetaMask account.');
       }
-
+  
       if (resolvedDaoId) {
         const daoName = await contract.methods.returnDaoName(resolvedDaoId).call();
         setOrganization({
@@ -81,26 +81,28 @@ const ProposalPage: React.FC = () => {
           name: daoName,
           logo: '/images/concept.png',
         });
-
+  
         const dao = await contract.methods.daos(resolvedDaoId).call();
         const totalProposals = parseInt(dao.proposalCount);
-
+  
         const proposalsData = await Promise.all(
           Array.from({ length: totalProposals }, (_, index) =>
             contract.methods.getProposal(resolvedDaoId, index).call()
           )
         );
-
+  
         const formattedProposals = proposalsData.map((proposalData: any, index: number) => ({
           id: index,
           description: proposalData.description,
-          optionDescriptions: proposalData.optionDescriptions,
-          optionVoteCounts: proposalData.optionVoteCounts.map((count: string) => parseInt(count)),
+          optionDescriptions: proposalData.optionDescriptions.filter((desc: string) => desc !== ''),
+          optionVoteCounts: proposalData.optionVoteCounts
+            .slice(0, proposalData.optionDescriptions.filter((desc: string) => desc !== '').length)
+            .map((count: string) => parseInt(count)),
           executed: proposalData.executed,
           deadline: parseInt(proposalData.deadline),
           totalVotes: parseInt(proposalData.totalVotes)
         }));
-
+  
         setProposals(formattedProposals);
       }
     } catch (error) {

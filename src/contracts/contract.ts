@@ -1,4 +1,3 @@
-// contract.ts
 
 export const contractABI = [
     {

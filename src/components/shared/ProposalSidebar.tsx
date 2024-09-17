@@ -127,7 +127,7 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
         name: option || `Option ${index + 1}`,
         value: Number(proposal.optionVoteCounts[index])
       }))
-      .filter(option => option.value > 0);
+      .filter(option => option.name !== '');
   };
 
   return (
@@ -147,21 +147,23 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
 
         <div className="mb-6 flex-grow">
           <h4 className="text-lg font-semibold text-gray-700 mb-4">Vote Options</h4>
-          {proposal?.optionDescriptions ? (
+          {proposal?.optionDescriptions && proposal.optionDescriptions.length > 0 ? (
             <div className="space-y-4">
               <Select onValueChange={setSelectedOption} disabled={timeRemaining === "Voting ended"}>
                 <SelectTrigger className="w-full text-black">
                   <SelectValue 
-                  placeholder="Select an option to vote"
-                  className='text-black'  
+                    placeholder="Select an option to vote"
+                    className='text-black'  
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {proposal.optionDescriptions.map((option, index) => (
-                    <SelectItem key={index} value={index.toString()}>
-                      {option || `Option ${index + 1}`} (Votes: {proposal.optionVoteCounts[index]})
-                    </SelectItem>
-                  ))}
+                  {proposal.optionDescriptions
+                    .filter(option => option !== '')
+                    .map((option, index) => (
+                      <SelectItem key={index} value={index.toString()}>
+                        {option} (Votes: {proposal.optionVoteCounts[index]})
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
               <Button 
