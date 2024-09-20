@@ -19,6 +19,8 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
   const [voteOptions, setVoteOptions] = useState<string[]>(['', '']);
   const [votingDuration, setVotingDuration] = useState('');
   const [contract, setContract] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initWeb3 = async () => {
@@ -31,6 +33,19 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
 
     initWeb3();
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      resetForm();
+    }
+  }, [open]);
+
+  const resetForm = () => {
+    setProposalDescription('');
+    setVoteOptions(['', '']);
+    setVotingDuration('');
+    setError(null);
+  };
 
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...voteOptions];
@@ -46,24 +61,23 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
 
   const handleCreateProposalSubmit = async () => {
     if (!proposalDescription || voteOptions.every(option => !option) || !votingDuration) {
-      alert('Please fill the description, at least one option, and the voting duration.');
+      setError('Please fill the description, at least one option, and the voting duration.');
       return;
     }
+
+    setIsSubmitting(true);
+    setError(null);
 
     try {
       const { ethereum } = window as any;
       if (!ethereum) {
-        alert('MetaMask not found!');
-        return;
+        throw new Error('MetaMask not found!');
       }
 
       const web3 = new Web3(ethereum);
       const accounts = await web3.eth.getAccounts();
 
-      // Pad the options array to always have 4 elements
       const paddedOptions = [...voteOptions, ...Array(4 - voteOptions.length).fill('')];
-
-      // Convert votingDuration from days to seconds
       const durationInSeconds = Number(votingDuration) * 24 * 60 * 60;
       
       await contract.methods.createProposal(daoId, proposalDescription, paddedOptions, durationInSeconds).send({ from: accounts[0] });
@@ -73,13 +87,14 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating proposal:', error);
-      alert('Failed to create proposal. Please try again.');
+      setError('Failed to create proposal. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => !isSubmitting && onOpenChange(newOpen)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Proposal</DialogTitle>
@@ -94,6 +109,7 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
               placeholder="Proposal description"
               className="w-full p-2 border rounded-md"
               rows={3}
+              disabled={isSubmitting}
             />
           </div>
           <div className="grid gap-2">
@@ -106,10 +122,11 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
                 onChange={(e) => handleOptionChange(index, e.target.value)}
                 placeholder={`Option ${index + 1}`}
                 className="w-full p-2 border rounded-md"
+                disabled={isSubmitting}
               />
             ))}
             {voteOptions.length < 4 && (
-              <Button onClick={addOption} className="mt-2">
+              <Button onClick={addOption} className="mt-2" disabled={isSubmitting}>
                 Add Option
               </Button>
             )}
@@ -123,14 +140,16 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
               onChange={(e) => setVotingDuration(e.target.value)}
               placeholder="e.g. 7"
               className="w-full p-2 border rounded-md"
+              disabled={isSubmitting}
             />
           </div>
         </div>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
         <DialogFooter>
-          <Button onClick={handleCreateProposalSubmit} className="bg-gradient-to-r from-pink-500 to-yellow-500">
-            Submit
+          <Button onClick={handleCreateProposalSubmit} className="bg-gradient-to-r from-pink-500 to-yellow-500" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancel
           </Button>
         </DialogFooter>

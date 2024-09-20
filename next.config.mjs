@@ -1,11 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: true,
+    images: {
+      domains: ['*'],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '**',
+        },
+        {
+          protocol: 'http',
+          hostname: '**',
+        },
+      ],
+    },
+    // Merge with your existing configuration
     typescript: {
-        ignoreBuildErrors: true,
+      ignoreBuildErrors: true,
     },
     eslint: {
-        ignoreDuringBuilds: true,
+      ignoreDuringBuilds: true,
     }
-};
-
-export default nextConfig;
+  };
+  
+  export default nextConfig;

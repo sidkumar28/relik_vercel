@@ -19,6 +19,8 @@ contract MultiDAO {
 
     struct DAO {
         string name;
+        string logo_hash;
+        string imageUrl; // New field
         address admin;
         uint proposalCount;
         mapping(address => bool) members;  
@@ -29,7 +31,7 @@ contract MultiDAO {
     mapping(uint => DAO) public daos;  
     uint public daoCount;  
     
-    event DAOCreated(uint daoId, string name, address admin);
+    event DAOCreated(uint daoId, string name, address admin, string imageUrl);
     event ProposalCreated(uint daoId, uint proposalId, string description, uint deadline);
     event Voted(uint daoId, uint proposalId, address voter);
     event ProposalExecuted(uint daoId, uint proposalId, string winningOptionDescription );
@@ -49,16 +51,17 @@ contract MultiDAO {
         _;
     }
 
-    function createDAO(string memory _name) public {
+    function createDAO(string memory _name, string memory _imageUrl) public {
         try this.getDAOIdByName(_name) {
             revert("DAO with this name already exists");
         } catch {
             DAO storage newDAO = daos[daoCount];
             newDAO.name = _name;
+            newDAO.imageUrl = _imageUrl; // Set the image URL
             newDAO.admin = msg.sender;
             newDAO.members[msg.sender] = true; 
             
-            emit DAOCreated(daoCount, _name, msg.sender);
+            emit DAOCreated(daoCount, _name, msg.sender, _imageUrl);
             daoCount++;
         }
     }
@@ -70,6 +73,16 @@ contract MultiDAO {
     function removeMember(uint daoId, address _member) public onlyAdmin(daoId) {
         require(daos[daoId].members[_member], "Member does not exist");
         daos[daoId].members[_member] = false;
+    }
+
+    function upload_imageHash(uint daoId, string memory image_hash) public onlyAdmin(daoId) {
+         DAO storage dao = daos[daoId];
+         dao.logo_hash = image_hash;
+    }
+
+    function retrieve_imageHash(uint daoId) public view onlyAdmin(daoId) returns (string memory logo_hash ) {
+        DAO storage dao = daos[daoId];
+        return (dao.logo_hash);
     }
 
     function createProposal(uint daoId, string memory _description, string[] memory _optionDescriptions, uint _votingDuration) public onlyAdmin(daoId) {
@@ -133,7 +146,7 @@ contract MultiDAO {
 
     function getProposal(uint daoId, uint proposalId) public view returns (string memory description, string[] memory optionDescriptions, uint[] memory optionVoteCounts, bool executed, uint deadline, uint totalVotes) {
         Proposal storage proposal = daos[daoId].proposals[proposalId];
-        uint optionCount = daos[daoId].proposalCount;
+        uint optionCount = 4;
         
         string[] memory optionDesc = new string[](optionCount);
         uint[] memory optionVotes = new uint[](optionCount);
@@ -167,6 +180,10 @@ contract MultiDAO {
         require(_id<daoCount);
         
         return daos[_id].name;
+    }
+
+    function getDAOImageUrl(uint daoId) public view returns (string memory) {
+        return daos[daoId].imageUrl;
     }
 
     function getDAOsForSender_admin() public view returns (uint[] memory) {

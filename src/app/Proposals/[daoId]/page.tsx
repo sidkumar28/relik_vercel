@@ -76,10 +76,11 @@ const ProposalPage: React.FC = () => {
   
       if (resolvedDaoId) {
         const daoName = await contract.methods.returnDaoName(resolvedDaoId).call();
+        const daoImageUrl = await contract.methods.getDAOImageUrl(resolvedDaoId).call();
         setOrganization({
           id: parseInt(resolvedDaoId), 
           name: daoName,
-          logo: '/images/concept.png',
+          logo: daoImageUrl || '/images/dao_logo.png', // Use the fetched image URL or fallback to default
         });
   
         const dao = await contract.methods.daos(resolvedDaoId).call();
@@ -161,7 +162,11 @@ const ProposalPage: React.FC = () => {
         <div className="border-l-2 border-[#00aaff]"></div>
         <div className="w-1/2">
           <div className="flex items-center space-x-4 mb-8">
-            <img src={organization?.logo || '/images/dao_logo.png'} alt={organization?.name || 'Default'} className="w-24 h-24 rounded-full shadow-lg" />
+          <img 
+            src={organization?.logo || '/images/dao_logo.png'} 
+            alt={organization?.name || 'Default'} 
+            className="w-24 h-24 rounded-full shadow-lg object-cover"
+          />        
             <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600">
               {organization?.name || 'Org Name'}
             </h1>

@@ -124,7 +124,7 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
     if (!proposal) return [];
     return proposal.optionDescriptions
       .map((option, index) => ({
-        name: option || `Option ${index + 1}`,
+        name: option,
         value: Number(proposal.optionVoteCounts[index])
       }))
       .filter(option => option.name !== '');

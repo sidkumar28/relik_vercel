@@ -9,6 +9,7 @@ import CreateOrganizationDialog from '@/components/shared/CreateOrganizationForm
 interface Organization {
   id: number;
   name: string;
+  imageUrl: string;
 }
 
 const MyOrganizations: React.FC = () => {
@@ -39,19 +40,29 @@ const MyOrganizations: React.FC = () => {
       const adminOrgs = await Promise.all(
         adminOrgIds.map(async (id: number) => {
           const name = await contract.methods.returnDaoName(id).call();
-          return { id, name: name || 'Unknown DAO' };
+          const imageUrl = await contract.methods.getDAOImageUrl(id).call();
+          return { 
+            id, 
+            name: name || 'Unknown DAO', 
+            imageUrl: imageUrl || '' 
+          } as Organization;
         })
       );
 
       const memberOrgs = await Promise.all(
         memberOrgIds.map(async (id: number) => {
           const name = await contract.methods.returnDaoName(id).call();
-          return { id, name: name || 'Unknown DAO' };
+          const imageUrl = await contract.methods.getDAOImageUrl(id).call();
+          return { 
+            id, 
+            name: name || 'Unknown DAO', 
+            imageUrl: imageUrl || '' 
+          } as Organization;
         })
       );
 
-      setAdminOrganizations(adminOrgs as Organization[]);
-      setMemberOrganizations(memberOrgs as Organization[]);
+      setAdminOrganizations(adminOrgs);
+      setMemberOrganizations(memberOrgs);
     } catch (error) {
       console.error('Error fetching DAOs:', error);
     }
@@ -63,6 +74,20 @@ const MyOrganizations: React.FC = () => {
 
   const handleOrgClick = (org: Organization, isAdmin: boolean) => {
     router.push(`/Proposals/${org.id}?isAdmin=${isAdmin}`);
+  };
+
+  const renderImage = (imageUrl: string, name: string) => {
+    return (
+      <img
+        src={imageUrl}
+        alt={name}
+        className="w-full h-48 object-cover"
+        onError={(e) => {
+          e.currentTarget.onerror = null; // prevents looping
+          e.currentTarget.src = '/path/to/fallback-image.jpg'; // Replace with your fallback image path
+        }}
+      />
+    );
   };
 
   return (
@@ -82,26 +107,27 @@ const MyOrganizations: React.FC = () => {
           Organizations You Admin
         </h2>
         <div className="flex flex-wrap justify-center gap-8">
-          {adminOrganizations.length > 0 ? (
-            adminOrganizations.map((org) => (
-              <div
-                key={org.id}
-                className="relative flex flex-col items-center shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl group"
-                style={{
-                  width: '320px',
-                  height: '300px',
-                  background: 'linear-gradient(to bottom, #003d6b, #00557d)',
-                }}
-                onClick={() => handleOrgClick(org, true)}
-              >
-                <div className="p-4 text-center">
-                  <h2 className="text-lg font-semibold text-white">{org.name}</h2>
-                </div>
+          {adminOrganizations.map((org) => (
+            <div
+              key={org.id}
+              className="relative flex flex-col items-center shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl group"
+              style={{
+                width: '320px',
+                height: '300px',
+                background: 'linear-gradient(to bottom, #003d6b, #00557d)',
+              }}
+              onClick={() => handleOrgClick(org, true)}
+            >
+              <img
+                src={org.imageUrl}
+                alt={org.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4 text-center">
+                <h2 className="text-lg font-semibold text-white">{org.name}</h2>
               </div>
-            ))
-          ) : (
-            <p>No admin organizations found.</p>
-          )}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -116,26 +142,27 @@ const MyOrganizations: React.FC = () => {
           Organizations You're a Member Of
         </h2>
         <div className="flex flex-wrap justify-center gap-8">
-          {memberOrganizations.length > 0 ? (
-            memberOrganizations.map((org) => (
-              <div
-                key={org.id}
-                className="relative flex flex-col items-center shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl group"
-                style={{
-                  width: '320px',
-                  height: '300px',
-                  background: 'linear-gradient(to bottom, #004d70, #008793)',
-                }}
-                onClick={() => handleOrgClick(org, false)}
-              >
-                <div className="p-4 text-center">
-                  <h2 className="text-lg font-semibold text-white">{org.name}</h2>
-                </div>
+          {memberOrganizations.map((org) => (
+            <div
+              key={org.id}
+              className="relative flex flex-col items-center shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl group"
+              style={{
+                width: '320px',
+                height: '300px',
+                background: 'linear-gradient(to bottom, #004d70, #008793)',
+              }}
+              onClick={() => handleOrgClick(org, false)}
+            >
+              <img
+                src={org.imageUrl}
+                alt={org.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4 text-center">
+                <h2 className="text-lg font-semibold text-white">{org.name}</h2>
               </div>
-            ))
-          ) : (
-            <p>No member organizations found.</p>
-          )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
