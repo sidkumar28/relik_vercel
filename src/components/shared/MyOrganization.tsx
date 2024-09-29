@@ -97,13 +97,8 @@ const MyOrganizations: React.FC = () => {
       </div>
 
       <div
-        className="mb-10 p-6 rounded-lg border-2"
-        style={{
-          background: 'linear-gradient(to bottom, #002d4d, #003d6b, #00557d)',
-          borderColor: '#00557d',
-        }}
-      >
-        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-center">
+        className="mb-10 p-6 ">
+        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
           Organizations You Admin
         </h2>
         <div className="flex flex-wrap justify-center gap-8">
@@ -114,7 +109,7 @@ const MyOrganizations: React.FC = () => {
               style={{
                 width: '320px',
                 height: '300px',
-                background: 'linear-gradient(to bottom, #003d6b, #00557d)',
+                background: '#2f323b',
               }}
               onClick={() => handleOrgClick(org, true)}
             >
@@ -134,11 +129,9 @@ const MyOrganizations: React.FC = () => {
       <div
         className="p-6 rounded-lg border-2"
         style={{
-          background: 'linear-gradient(to bottom, #004d70, #008793)',
-          borderColor: '#00557d',
         }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
           Organizations You're a Member Of
         </h2>
         <div className="flex flex-wrap justify-center gap-8">

@@ -90,7 +90,7 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onO
     <>
       <Button
         onClick={handleOpenDialog}
-        className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-items-start w-64 h-16 text-center overflow-hidden"
+        className="bg-[#9911ED] text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-items-start w-64 h-16 text-center overflow-hidden"
       >
         Create Organization
       </Button>
@@ -124,7 +124,7 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onO
               {errors.imageUrl && <p className="text-red-500 mt-1">{errors.imageUrl.message}</p>}
             </div>
             <DialogFooter>
-              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-yellow-500 text-black font-semibold rounded-lg shadow-lg" disabled={isSubmitting}>
+              <Button type="submit" className="bg-[#9911ED] text-white font-semibold rounded-lg shadow-lg" disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </Button>
               <Button type="button" variant="ghost" onClick={handleCloseDialog} disabled={isSubmitting}>

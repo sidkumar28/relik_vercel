@@ -7,7 +7,7 @@ const Header = () => {
     <div 
       className="flex items-center justify-between h-16 px-4" 
       style={{
-        backgroundImage: 'bg-gradient-to-b from-[#051937] via-[#004d7a] to-[#008793]  ',
+        backgroundImage: '',
         color: 'white',
       }}
     >
@@ -15,9 +15,8 @@ const Header = () => {
         <img 
           src="/images/dao_logo.png" 
           alt="Logo"
-          className="h-8 w-auto" 
+          className="h-10 w-auto" 
         />
-        <div className="text-4xl font-bold text-red-400">TrueVote.io</div>
       </div>
 
       

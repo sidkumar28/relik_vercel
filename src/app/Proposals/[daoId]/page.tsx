@@ -140,14 +140,14 @@ const ProposalPage: React.FC = () => {
     <div className="min-h-screen p-8 text-white max-w-screen-xl mx-auto">
       <div className="mb-6 flex justify-between">
         <button
-          className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+          className="bg-[#9911ED] text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
           onClick={handleCreateProposalClick}
         >
           Create Proposal
         </button>
         {isAdmin && (
           <button
-            className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+            className="bg-black text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
             onClick={handleManageMembersClick}
           >
             Manage Members
@@ -155,7 +155,7 @@ const ProposalPage: React.FC = () => {
         )}
       </div>
 
-      <div className="flex items-start justify-between p-8 border-2 border-orange-400 rounded-lg bg-gradient-to-r from-[#001f3f] via-[#003366] to-[#00274d]">
+      <div className="flex items-start justify-between p-8 rounded-lg bg-[#242731]">
         <div className="w-1/2 pr-8">
           <img src="/images/concept.png" alt="Tech illustration" className="w-full h-auto rounded-lg shadow-lg" />
         </div>
@@ -167,7 +167,7 @@ const ProposalPage: React.FC = () => {
             alt={organization?.name || 'Default'} 
             className="w-24 h-24 rounded-full shadow-lg object-cover"
           />        
-            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600">
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-[#ffffff]">
               {organization?.name || 'Org Name'}
             </h1>
           </div>
@@ -182,7 +182,7 @@ const ProposalPage: React.FC = () => {
                     <h3 className="text-xl font-semibold">{proposal.description}</h3>
                     <button
                       onClick={() => handleProposalClick(proposal)}
-                      className="mt-2 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-4 py-2 rounded-lg"
+                      className="mt-2 bg-[#3f8cff] text-white px-4 py-2 rounded-lg"
                     >
                       View Details
                     </button>

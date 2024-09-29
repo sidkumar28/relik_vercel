@@ -146,7 +146,7 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
         <DialogFooter>
-          <Button onClick={handleCreateProposalSubmit} className="bg-gradient-to-r from-pink-500 to-yellow-500" disabled={isSubmitting}>
+          <Button onClick={handleCreateProposalSubmit} className="bg-[#3f8cff]" disabled={isSubmitting}>
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
