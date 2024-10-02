@@ -2,10 +2,16 @@
 import React from 'react';
 import CreateProposalForm from '@/components/shared/CreateProposalForm';
 
-const CreateProposalPage = () => {
-  const handleFormSubmit = (data: any) => {
-    
+interface ProposalData {
+  title: string;
+  description: string;
+  // Add any other fields you expect in your form data
+}
+
+const CreateProposalPage: React.FC = () => {
+  const handleFormSubmit = (data: ProposalData) => {
     console.log('Submitted Data:', data);
+    // Add your logic for handling form data submission here
   };
 
   return (
