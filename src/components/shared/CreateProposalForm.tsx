@@ -95,13 +95,13 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => !isSubmitting && onOpenChange(newOpen)}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-md mx-auto p-4 sm:max-w-lg sm:p-6">
         <DialogHeader>
-          <DialogTitle>Create New Proposal</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">Create New Proposal</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <label htmlFor="description" className="text-sm font-medium">Description:</label>
+            <label htmlFor="description" className="text-sm sm:text-base font-medium">Description:</label>
             <textarea
               id="description"
               value={proposalDescription}
@@ -113,7 +113,7 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
             />
           </div>
           <div className="grid gap-2">
-            <label className="text-sm font-medium">Vote Options:</label>
+            <label className="text-sm sm:text-base font-medium">Vote Options:</label>
             {voteOptions.map((option, index) => (
               <Input
                 key={index}
@@ -126,13 +126,13 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
               />
             ))}
             {voteOptions.length < 4 && (
-              <Button onClick={addOption} className="mt-2" disabled={isSubmitting}>
+              <Button onClick={addOption} className="mt-2 w-full sm:w-auto" disabled={isSubmitting}>
                 Add Option
               </Button>
             )}
           </div>
           <div className="grid gap-2">
-            <label htmlFor="duration" className="text-sm font-medium">Voting Duration (in days):</label>
+            <label htmlFor="duration" className="text-sm sm:text-base font-medium">Voting Duration (in days):</label>
             <Input
               id="duration"
               type="number"
@@ -145,7 +145,7 @@ const CreateProposalDialog: React.FC<CreateProposalDialogProps> = ({ open, onOpe
           </div>
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
           <Button onClick={handleCreateProposalSubmit} className="bg-[#3f8cff]" disabled={isSubmitting}>
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>

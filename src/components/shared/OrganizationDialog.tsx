@@ -64,33 +64,33 @@ const OrganizationActionsDialog: React.FC<OrganizationActionsDialogProps> = ({ i
 
   return (
     <Dialog open={isOpen} onOpenChange={(newOpen) => !isSubmitting && onClose()}>
-      <DialogContent className="max-w-lg mx-auto p-6 bg-gray-800 text-white">
+      <DialogContent className="max-w-full sm:max-w-lg mx-auto p-4 sm:p-6 bg-gray-800 text-white">
         <DialogHeader>
-          <DialogTitle>Organization Actions</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">Organization Actions</DialogTitle>
         </DialogHeader>
-        <div>
-          <Label htmlFor="memberAddress">Member Address</Label>
+        <div className="mt-4">
+          <Label htmlFor="memberAddress" className="text-sm sm:text-base">Member Address</Label>
           <Input
             id="memberAddress"
             value={memberAddress}
             onChange={(e) => setMemberAddress(e.target.value)}
             placeholder="Enter member address"
-            className="mt-2"
+            className="mt-2 w-full text-sm sm:text-base"
             disabled={isSubmitting}
           />
-          {error && <p className="text-red-500 mt-2">{error}</p>}
+          {error && <p className="text-red-500 text-xs sm:text-sm mt-2">{error}</p>}
         </div>
-        <DialogFooter>
+        <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-4">
           <Button 
             onClick={() => handleAction('add')} 
-            className="bg-green-500 text-white"
+            className="w-full sm:w-auto bg-green-500 text-white text-sm sm:text-base"
             disabled={isSubmitting || !memberAddress}
           >
             {isSubmitting ? 'Add Member' : 'Add Member'}
           </Button>
           <Button 
             onClick={() => handleAction('remove')} 
-            className="bg-red-500 text-white"
+            className="w-full sm:w-auto bg-red-500 text-white text-sm sm:text-base"
             disabled={isSubmitting || !memberAddress}
           >
             {isSubmitting ? 'Remove Member' : 'Remove Member'}
