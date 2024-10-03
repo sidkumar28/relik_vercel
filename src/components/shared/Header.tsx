@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white flex-col">
+    <header className=" text-white flex-col">
       <div className="flex items-center justify-between h-16 px-4">
         {/* Logo */}
         <div className="flex items-center space-x-4">
