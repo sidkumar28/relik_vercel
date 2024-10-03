@@ -137,17 +137,17 @@ const ProposalPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 text-white max-w-screen-xl mx-auto">
-      <div className="mb-6 flex justify-between">
+    <div className="min-h-screen p-4 lg:p-8 text-white max-w-screen-xl mx-auto">
+      <div className="mb-6 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0">
         <button
-          className="bg-[#9911ED] text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+          className="bg-[#9911ED] text-white text-lg md:text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-full md:w-52 h-12 md:h-16 text-center overflow-hidden"
           onClick={handleCreateProposalClick}
         >
           Create Proposal
         </button>
         {isAdmin && (
           <button
-            className="bg-black text-white text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-52 h-16 text-center overflow-hidden"
+            className="bg-black text-white text-lg md:text-xl px-4 py-2 rounded-3xl flex items-center justify-center w-full md:w-52 h-12 md:h-16 text-center overflow-hidden"
             onClick={handleManageMembersClick}
           >
             Manage Members
@@ -155,31 +155,31 @@ const ProposalPage: React.FC = () => {
         )}
       </div>
 
-      <div className="flex items-start justify-between p-8 rounded-lg bg-[#242731]">
-        <div className="w-1/2 pr-8">
+      <div className="flex flex-col lg:flex-row items-start justify-between p-4 lg:p-8 rounded-lg bg-[#242731]">
+        <div className="w-full lg:w-1/2 pr-0 lg:pr-8 mb-4 lg:mb-0">
           <img src="/images/concept.png" alt="Tech illustration" className="w-full h-auto rounded-lg shadow-lg" />
         </div>
         <div className="border-l-2 border-[#00aaff]"></div>
-        <div className="w-1/2">
-          <div className="flex items-center space-x-4 mb-8">
+        <div className="w-full lg:w-1/2">
+          <div className="flex items-center space-x-4 mb-4 lg:mb-8">
           <img 
             src={organization?.logo || '/images/dao_logo.png'} 
             alt={organization?.name || 'Default'} 
             className="w-24 h-24 rounded-full shadow-lg object-cover"
           />        
-            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-[#ffffff]">
+            <h1 className="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-[#ffffff]">
               {organization?.name || 'Org Name'}
             </h1>
           </div>
           <div className="mt-6">
-            <h2 className="text-2xl font-bold mb-4">Proposals</h2>
-            <div className="h-80 overflow-y-auto space-y-4 pr-4">
+            <h2 className="text-xl md:text-2xl font-bold mb-4">Proposals</h2>
+            <div className="h-64 md:h-80 overflow-y-auto space-y-4 pr-4">
               {error ? (
                 <p className="text-red-500">{error}</p>
               ) : proposals.length > 0 ? (
                 proposals.map(proposal => (
                   <div key={proposal.id} className="p-4 border rounded-lg bg-gray-800 shadow-lg">
-                    <h3 className="text-xl font-semibold">{proposal.description}</h3>
+                    <h3 className="text-lg md:text-xl font-semibold">{proposal.description}</h3>
                     <button
                       onClick={() => handleProposalClick(proposal)}
                       className="mt-2 bg-[#3f8cff] text-white px-4 py-2 rounded-lg"
