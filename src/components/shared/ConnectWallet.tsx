@@ -63,7 +63,7 @@ const ConnectWallet: React.FC = () => {
           <p className="text-white mb-4">Connected: {walletAddress}</p>
           <button
             onClick={disconnectWallet}
-            className="bg-[#9911ED] text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-64 h-16 text-center overflow-hidden"
+            className="bg-[#9911ED] text-white text-lg md:text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-48 md:w-64 h-12 md:h-16 text-center overflow-hidden"
           >
             Disconnect Wallet
           </button>
@@ -71,7 +71,7 @@ const ConnectWallet: React.FC = () => {
       ) : (
         <button
           onClick={connectWallet}
-          className="bg-[#9911ED] text-white text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-64 h-16 text-center overflow-hidden"
+          className="bg-[#9911ED] text-white text-lg md:text-xl mb-6 px-4 py-2 rounded-3xl flex items-center justify-center w-48 md:w-64 h-12 md:h-16 text-center overflow-hidden"
         >
           Connect Wallet
         </button>

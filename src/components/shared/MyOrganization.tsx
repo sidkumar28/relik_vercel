@@ -91,14 +91,14 @@ const MyOrganizations: React.FC = () => {
   };
 
   return (
-    <div className="p-12 text-white max-w-screen-xl mx-auto">
+    <div className="p-4 sm:p-8 text-white max-w-screen-xl mx-auto">
       <div className="mb-6 flex justify-center">
         <CreateOrganizationDialog onOrganizationCreated={fetchOrganizations} />
       </div>
 
       <div
-        className="mb-10 p-6 ">
-        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
+        className="mb-10 p-4 sm:p-6">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
           Organizations You Admin
         </h2>
         <div className="flex flex-wrap justify-center gap-8">
@@ -127,11 +127,11 @@ const MyOrganizations: React.FC = () => {
       </div>
 
       <div
-        className="p-6 rounded-lg border-2"
+        className="p-4 sm:p-6 rounded-lg border-2"
         style={{
         }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-transparent bg-clip-text bg-white text-center">
           Organizations You're a Member Of
         </h2>
         <div className="flex flex-wrap justify-center gap-8">

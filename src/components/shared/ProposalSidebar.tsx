@@ -132,23 +132,23 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
 
   return (
     <div className={`fixed top-0 right-0 w-96 h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto`}>
-      <div className="p-6 flex flex-col h-full">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Proposal Details</h2>
+      <div className="p-4 sm:p-6 flex flex-col h-full">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-800">Proposal Details</h2>
           <Button variant="ghost" onClick={onClose} className="p-1">
             <X className="h-6 w-6 text-black" />
           </Button>
         </div>
 
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">{proposal?.description || 'Loading...'}</h3>
-          <p className="text-sm text-gray-600">{timeRemaining}</p>
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-xl font-semibold text-gray-700 mb-2">{proposal?.description || 'Loading...'}</h3>
+          <p className="text-xs sm:text-sm text-gray-600">{timeRemaining}</p>
         </div>
 
-        <div className="mb-6 flex-grow">
-          <h4 className="text-lg font-semibold text-gray-700 mb-4">Vote Options</h4>
+        <div className="mb-4 sm:mb-6 flex-grow">
+          <h4 className="text-base sm:text-lg font-semibold text-gray-700 mb-4">Vote Options</h4>
           {proposal?.optionDescriptions && proposal.optionDescriptions.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-2 sm:space-y-4">
               <Select onValueChange={setSelectedOption} disabled={timeRemaining === "Voting ended"}>
                 <SelectTrigger className="w-full text-black">
                   <SelectValue 
@@ -180,7 +180,7 @@ const ProposalSidebar: React.FC<ProposalSidebarProps> = ({ open, onClose, daoId,
         </div>
 
         <div className="mt-auto">
-          <h4 className="text-lg font-semibold text-gray-700 mb-4">Vote Distribution</h4>
+          <h4 className="text-base sm:text-lg font-semibold text-gray-700 mb-4">Vote Distribution</h4>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
