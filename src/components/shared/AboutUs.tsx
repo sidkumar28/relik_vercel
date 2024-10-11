@@ -1,62 +1,110 @@
 // pages/about.tsx
 'use client';
-import React from 'react';
-// pages/about.tsx // Correct path to Header component
-
-
+import React, { useState } from 'react';
 
 const About: React.FC = () => {
+  // Accordion state management
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const toggleAccordion = (index: number) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="flex justify-between items-center py-4"></header>
-      
+
       <main className="container mx-auto px-4 py-10">
-        <h1 className="text-4xl font-bold mb-8">About Us</h1>
-        
+        {/* Intro Section */}
+        <section className="mb-8 bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h1 className="text-5xl font-extrabold mb-6 text-center text-indigo-400">
+        About Us
+      </h1>
+      <p className="text-lg leading-relaxed text-gray-300 text-center">
+        Welcome to our platform where we aim to revolutionize the decision-making process through 
+      <span className="text-indigo-500 font-semibold">
+         decentralized voting systems
+      </span>. Our mission is to provide secure, transparent, and accessible voting mechanisms 
+        for <span className="text-indigo-500 font-semibold">DAOs</span> and collaborative communities.
+      </p>
+    </section>
+        {/* FAQ Section */}
         <section className="space-y-6">
-          <p>
-            Welcome to our platform where we aim to revolutionize the decision-making process through decentralized voting systems. We are committed to providing secure, transparent, and accessible voting mechanisms for decentralized autonomous organizations (DAOs) and other collaborative communities.
-          </p>
-          
-          <h2 className="text-2xl font-semibold">What is a Decentralized Voting System?</h2>
-          <p>
-            A decentralized voting system allows individuals to vote without the need for a central authority. Unlike traditional voting, it ensures the votes are immutable, verifiable, and publicly auditable, making it a vital tool for DAOs and other organizations seeking transparent governance.
-          </p>
+          <h2 className="text-2xl font-semibold mb-4">Learn About Decentralized Autonomous Organizations (DAOs)</h2>
 
-          <h3 className="text-xl font-semibold">Key Features of Decentralized Voting</h3>
-          <ul className="list-disc list-inside space-y-2">
-            <li>
-              <strong>Transparency:</strong> Every vote is recorded on a blockchain, providing an immutable record.
-            </li>
-            <li>
-              <strong>Security:</strong> Cryptographic techniques ensure that votes are tamper-proof and secure.
-            </li>
-            <li>
-              <strong>Anonymity:</strong> Voters can cast their votes anonymously, preserving privacy while ensuring integrity.
-            </li>
-            <li>
-              <strong>Inclusivity:</strong> Anyone with access to the system can participate, ensuring that the voting process is open and fair.
-            </li>
-          </ul>
+          {/* First Question */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            <button
+              className="w-full text-left font-semibold text-xl"
+              onClick={() => toggleAccordion(0)}
+            >
+              {activeIndex === 0 ? '▼ ' : '► '} What is a DAO?
+            </button>
+            {activeIndex === 0 && (
+              <p className="mt-2 text-lg">
+                A DAO is a decentralized autonomous organization, run by its members. It enables a collaborative, transparent decision-making process without the need for a central authority.
+              </p>
+            )}
+          </div>
 
-          <h3 className="text-xl font-semibold">How Does It Work?</h3>
-          <p>
-            In a decentralized voting system, each vote is treated as a transaction on the blockchain. The process is secure and verifiable through the following steps:
-          </p>
-          <ol className="list-decimal list-inside space-y-2">
-            <li>Voters are provided with unique cryptographic keys to cast their votes securely.</li>
-            <li>Votes are recorded and encrypted on a blockchain, ensuring transparency and immutability.</li>
-            <li>After the voting period ends, results are tallied and can be publicly verified without revealing the identity of individual voters.</li>
-          </ol>
+          {/* Second Question */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            <button
+              className="w-full text-left font-semibold text-xl"
+              onClick={() => toggleAccordion(1)}
+            >
+              {activeIndex === 1 ? '▼ ' : '► '} How do I create an organization?
+            </button>
+            {activeIndex === 1 && (
+              <p className="mt-2 text-lg">
+                Simply sign up, and start building your dream team! You can customize your organization based on your community's needs and preferences.
+              </p>
+            )}
+          </div>
 
-          <h2 className="text-2xl font-semibold">Benefits of Decentralized Voting</h2>
-          <p>
-            Decentralized voting provides a modern solution for transparent, fair, and secure elections, especially in environments like DAOs where trust and openness are essential.
-          </p>
+          {/* Third Question */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            <button
+              className="w-full text-left font-semibold text-xl"
+              onClick={() => toggleAccordion(2)}
+            >
+              {activeIndex === 2 ? '▼ ' : '► '} How does decentralized voting work?
+            </button>
+            {activeIndex === 2 && (
+              <div className="mt-2 text-lg">
+                <p>
+                  In decentralized voting, each vote is securely cast and recorded on a blockchain. The process ensures transparency, immutability, and public verifiability without compromising the anonymity of voters.
+                </p>
+                <ul className="list-disc list-inside mt-2">
+                  <li>Voters use cryptographic keys to cast their vote securely.</li>
+                  <li>Votes are recorded and encrypted on a blockchain.</li>
+                  <li>Results can be verified by the public, ensuring transparency.</li>
+                </ul>
+              </div>
+            )}
+          </div>
 
-          <p>
-            By integrating blockchain technology, we ensure that every vote is secure and publicly verifiable. Our system promotes inclusivity and aims to provide a fair platform for decision-making, free from external interference or central authority control.
-          </p>
+          {/* Fourth Question */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            <button
+              className="w-full text-left font-semibold text-xl"
+              onClick={() => toggleAccordion(3)}
+            >
+              {activeIndex === 3 ? '▼ ' : '► '} What are the key features of a DAO?
+            </button>
+            {activeIndex === 3 && (
+              <div className="mt-2 text-lg">
+                <p>DAOs enable a transparent and secure decision-making process. Key features include:</p>
+                <ul className="list-disc list-inside mt-2">
+                  <li><strong>Transparency:</strong> Every vote is recorded on a blockchain.</li>
+                  <li><strong>Security:</strong> Cryptographic techniques ensure votes are tamper-proof.</li>
+                  <li><strong>Anonymity:</strong> Voters' identities are protected.</li>
+                  <li><strong>Inclusivity:</strong> Anyone can participate in the process.</li>
+                </ul>
+              </div>
+            )}
+          </div>
+
         </section>
       </main>
     </div>
