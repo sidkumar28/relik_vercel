@@ -48,7 +48,7 @@ const Contact: React.FC = () => {
     if (formSubmitted) {
       const timer = setTimeout(() => {
         setFormSubmitted(false);
-      }, 20000); // 20 seconds = 20000 milliseconds
+      }, 2000); // 20 seconds = 20000 milliseconds
 
       // Cleanup the timer when the component unmounts or when formSubmitted changes
       return () => clearTimeout(timer);
@@ -57,7 +57,7 @@ const Contact: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-r">
-      <div className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg w-full max-w-xs">
+      <div className="bg-gray-900 p-4 md:p-6 rounded-lg shadow-lg w-full max-w-xs">
         <h1 className="text-2xl font-extrabold mb-4 text-center text-indigo-400">
           Contact Us
         </h1>
