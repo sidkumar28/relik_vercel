@@ -22,7 +22,7 @@ const Contact: React.FC = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:3001/Contact', { // Correct endpoint
+      const response = await fetch('http://localhost:3000/Contact', { // Correct endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'db/json',
