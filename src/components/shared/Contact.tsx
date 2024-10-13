@@ -1,16 +1,22 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     message: '',
   });
 
-  const [formSubmitted, setFormSubmitted] = useState(false); // State to handle form submission status
+  const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -18,21 +24,21 @@ const Contact: React.FC = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-  
+
     try {
-      const response = await fetch('http://localhost:3000/Contact', { // Correct endpoint
+      const response = await fetch('http://localhost:3000/Contact', {
         method: 'POST',
         headers: {
-          'Content-Type': 'db/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         console.log('Form Data Submitted:', formData);
-        setFormSubmitted(true);  // Show success message
+        setFormSubmitted(true); // Show success message
         setFormData({ name: '', email: '', message: '' }); // Reset the form
       } else {
         console.error('Error submitting form');
@@ -41,16 +47,13 @@ const Contact: React.FC = () => {
       console.error('Error submitting form', error);
     }
   };
-  
 
-  // Automatically hide the success message after 20 seconds
   useEffect(() => {
     if (formSubmitted) {
       const timer = setTimeout(() => {
         setFormSubmitted(false);
-      }, 2000); // 20 seconds = 20000 milliseconds
+      }, 2000);
 
-      // Cleanup the timer when the component unmounts or when formSubmitted changes
       return () => clearTimeout(timer);
     }
   }, [formSubmitted]);
@@ -58,17 +61,12 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-r">
       <div className="bg-gray-900 p-4 md:p-6 rounded-lg shadow-lg w-full max-w-xs">
-        <h1 className="text-2xl font-extrabold mb-4 text-center text-indigo-400">
-          Contact Us
-        </h1>
-        
-        {/* Show a success message after form is submitted */}
+        <h1 className="text-2xl font-extrabold mb-4 text-center text-indigo-400">Contact Us</h1>
+
         {formSubmitted && (
-          <p className="text-green-500 font-semibold text-center mb-4">
-            Your queries have been sent!
-          </p>
+          <p className="text-green-500 font-semibold text-center mb-4">Your queries have been sent!</p>
         )}
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-400">
@@ -130,3 +128,4 @@ const Contact: React.FC = () => {
 };
 
 export default Contact;
+
