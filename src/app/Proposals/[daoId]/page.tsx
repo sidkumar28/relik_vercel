@@ -165,7 +165,7 @@ const ProposalPage: React.FC = () => {
           <img 
             src={organization?.logo || '/images/dao_logo.png'} 
             alt={organization?.name || 'Default'} 
-            className="w-24 h-24 rounded-full shadow-lg object-cover"
+            className="w-24 h-24 rounded-full shadow-lg object-fill"
           />        
             <h1 className="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-[#ffffff]">
               {organization?.name || 'Org Name'}

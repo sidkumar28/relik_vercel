@@ -1,4 +1,4 @@
-// pages/about.tsx
+// src/components/shared/AboutUs.tsx
 'use client';
 import React, { useState } from 'react';
 
@@ -17,23 +17,23 @@ const About: React.FC = () => {
       <main className="container mx-auto px-4 py-10">
         {/* Intro Section */}
         <section className="mb-8 bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h1 className="text-5xl font-extrabold mb-6 text-center text-indigo-400">
-        About Us
-      </h1>
-      <p className="text-lg leading-relaxed text-gray-300 text-center">
-        Welcome to our platform where we aim to revolutionize the decision-making process through 
-      <span className="text-indigo-500 font-semibold">
-         decentralized voting systems
-      </span>. Our mission is to provide secure, transparent, and accessible voting mechanisms 
-        for <span className="text-indigo-500 font-semibold">DAOs</span> and collaborative communities.
-      </p>
-    </section>
+          <h1 className="text-5xl font-extrabold mb-6 text-center text-indigo-400">
+            About Us
+          </h1>
+          <p className="text-lg leading-relaxed text-gray-300 text-center">
+            Welcome to our platform where we aim to revolutionize the decision-making process through 
+            <span className="text-indigo-500 font-semibold">
+              decentralized voting systems
+            </span>. Our mission is to provide secure, transparent, and accessible voting mechanisms 
+            for <span className="text-indigo-500 font-semibold">DAOs</span> and collaborative communities.
+          </p>
+        </section>
         {/* FAQ Section */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold mb-4">Learn About Decentralized Autonomous Organizations (DAOs)</h2>
 
           {/* First Question */}
-          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md">
             <button
               className="w-full text-left font-semibold text-xl"
               onClick={() => toggleAccordion(0)}
@@ -48,7 +48,7 @@ const About: React.FC = () => {
           </div>
 
           {/* Second Question */}
-          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md">
             <button
               className="w-full text-left font-semibold text-xl"
               onClick={() => toggleAccordion(1)}
@@ -63,7 +63,7 @@ const About: React.FC = () => {
           </div>
 
           {/* Third Question */}
-          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md">
             <button
               className="w-full text-left font-semibold text-xl"
               onClick={() => toggleAccordion(2)}
@@ -85,7 +85,7 @@ const About: React.FC = () => {
           </div>
 
           {/* Fourth Question */}
-          <div className="bg-gray-800 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md">
             <button
               className="w-full text-left font-semibold text-xl"
               onClick={() => toggleAccordion(3)}

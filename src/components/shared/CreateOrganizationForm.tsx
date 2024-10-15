@@ -56,8 +56,8 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ onO
 
       const response = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
         headers: {
-          'pinata_api_key': PINATA_API_KEY,
-          'pinata_secret_api_key': PINATA_SECRET_API_KEY,
+          'pinata_api_key': '21c0b9a3fa9672e60f98' ,
+          'pinata_secret_api_key': '3b7772175f7d1e85d6c5a66fa679fa2f1b4c6d986c9a9c866460bce158889dde',
           'Content-Type': 'multipart/form-data',
         },
       });
