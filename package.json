@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
     "@mui/material": "^6.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -17,14 +18,22 @@
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
+    "@thirdweb-dev/sdk": "^4.0.99",
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.97",
     "@wagmi/core": "^2.13.4",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "ethers": "^5.7.2",
+    "express": "^4.21.1",
+    "ipfs-http-client": "^60.0.1",
     "lucide-react": "^0.438.0",
     "metamask-react": "^2.7.0",
+    "mongoose": "^8.7.1",
     "next": "^14.2.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -39,6 +48,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

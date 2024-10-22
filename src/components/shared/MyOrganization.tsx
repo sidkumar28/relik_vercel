@@ -116,7 +116,7 @@ const MyOrganizations: React.FC = () => {
               <img
                 src={org.imageUrl}
                 alt={org.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-fill"
               />
               <div className="p-4 text-center">
                 <h2 className="text-lg font-semibold text-white">{org.name}</h2>
